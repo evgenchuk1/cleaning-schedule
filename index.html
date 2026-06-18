@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1A1A2E">
+<title>לוז ניקיון מקררים | שופרסל</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root {
+  --yellow:   #FFCC00;
+  --dark:     #1A1A2E;
+  --red:      #CC0000;
+  --red-bg:   #FFF0F0;
+  --green:    #27AE60;
+  --green-bg: #E8F8F1;
+  --orange:   #E67E22;
+  --gray:     #95A5A6;
+  --light:    #F4F4F6;
+  --white:    #FFFFFF;
+  --border:   #E0E0E0;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--light);color:var(--dark);direction:rtl;min-height:100vh;display:flex;flex-direction:column;font-size:15px}
+
+/* ── HEADER ── */
+header{background:var(--dark);color:var(--yellow);padding:11px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 3px 10px rgba(0,0,0,.4)}
+.hd-left{display:flex;align-items:center;gap:10px}
+.logo{background:var(--yellow);color:var(--dark);font-weight:900;font-size:19px;width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hd-title{font-size:17px;font-weight:700;line-height:1.2}
+.hd-sub{font-size:11px;color:#aaa}
+.week-chip{background:var(--yellow);color:var(--dark);border-radius:20px;padding:4px 13px;font-size:12px;font-weight:700;white-space:nowrap}
+
+/* ── ALERT BANNER ── */
+.alert-banner{display:none;background:var(--red);color:#fff;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;text-align:center;letter-spacing:.3px}
+.alert-banner.on{display:block;animation:blink-bg 1.5s ease infinite}
+@keyframes blink-bg{0%,100%{background:var(--red)}50%{background:#E53935}}
+
+/* ── PROGRESS ── */
+.prog-wrap{background:var(--white);padding:10px 16px;border-bottom:1px solid var(--border)}
+.prog-row{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:5px}
+.prog-bar{height:7px;background:#e0e0e0;border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:4px;transition:width .4s}
+
+/* ── DAY TABS ── */
+.tabs{display:flex;background:var(--white);border-bottom:2.5px solid var(--yellow);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:9px 14px;font-size:13px;font-weight:600;color:#777;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2.5px;white-space:nowrap;transition:all .18s;user-select:none;text-align:center}
+.tab.today{background:#FFFDE7}
+.tab.active{color:var(--dark);border-bottom-color:var(--yellow)}
+.tab-day{font-size:10px;color:#aaa;margin-top:1px}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:4px;vertical-align:middle}
+.dot-ok{background:var(--green)}.dot-bad{background:var(--red)}.dot-pend{background:#ccc}
+
+/* ── MAIN ── */
+main{flex:1;padding:12px 14px 80px;max-width:580px;margin:0 auto;width:100%}
+.day-sec{display:none}.day-sec.on{display:block}
+.day-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:9px;border-bottom:2px solid var(--yellow)}
+.day-hname{font-size:19px;font-weight:800}
+.day-date-badge{font-size:12px;color:#777;background:var(--light);padding:3px 10px;border-radius:12px}
+
+/* ── TASK CARD ── */
+.card{background:var(--white);border-radius:12px;padding:13px 15px;margin-bottom:9px;display:flex;align-items:center;gap:13px;box-shadow:var(--card-shadow);border-right:5px solid var(--gray);cursor:pointer;transition:all .2s;user-select:none}
+.card:active{transform:scale(.98)}
+.card.done{background:var(--green-bg);border-right-color:var(--green)}
+.card.late{background:var(--red-bg);border-right-color:var(--red)}
+.card.late{animation:pulse-border 1.8s ease infinite}
+@keyframes pulse-border{0%,100%{border-right-color:var(--red)}50%{border-right-color:var(--orange)}}
+.chk{width:30px;height:30px;border-radius:50%;border:2.5px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px;transition:all .2s;background:#fafafa}
+.card.done .chk{background:var(--green);border-color:var(--green);color:#fff}
+.card.late .chk{border-color:var(--red);background:var(--red-bg)}
+.cinfo{flex:1;min-width:0}
+.cname{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card.done .cname{text-decoration:line-through;color:#999}
+.cloc{font-size:11px;color:#999;margin-top:2px}
+.cloc::before{content:'📍 '}
+.cstatus{font-size:11px;margin-top:4px;font-weight:600}
+.cstatus.bad{color:var(--red)}.cstatus.ok{color:var(--green)}
+
+/* ── PERIODIC ── */
+.peri-sec{margin-top:18px}
+.sec-title{font-size:14px;font-weight:700;background:var(--yellow);color:var(--dark);padding:7px 12px;border-radius:8px;margin-bottom:10px}
+.peri-card{background:var(--white);border-radius:12px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--card-shadow);border-right:5px solid var(--orange)}
+.peri-name{font-size:14px;font-weight:700}
+.peri-dates{font-size:11px;color:#888;margin-top:3px}
+.peri-next{font-size:12px;color:var(--orange);font-weight:700;margin-top:5px}
+
+/* ── EMPTY DAY ── */
+.empty{text-align:center;padding:50px 20px;color:#bbb}
+.empty-ico{font-size:46px;margin-bottom:10px}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--white);border-radius:18px;padding:24px 20px;max-width:360px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25);max-height:85vh;overflow-y:auto}
+.modal-ico{font-size:50px;text-align:center;margin-bottom:10px}
+.modal-title{font-size:20px;font-weight:800;text-align:center;margin-bottom:16px}
+.modal-title.red{color:var(--red)}.modal-title.orange{color:var(--orange)}
+.modal-list{list-style:none;margin-bottom:18px}
+.modal-list li{padding:9px 12px;border-radius:8px;margin-bottom:7px;font-size:13px;border-right:3px solid}
+.modal-list li.red{background:var(--red-bg);border-color:var(--red)}
+.modal-list li.orange{background:#FFF8E1;border-color:var(--orange)}
+.modal-btn{width:100%;padding:13px;background:var(--dark);color:var(--yellow);border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.modal-btn:active{opacity:.85}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:68px;left:16px;width:50px;height:50px;background:var(--dark);color:var(--yellow);border-radius:50%;border:none;font-size:20px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:100}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:14px 16px;font-size:11px;color:#aaa;border-top:1px solid var(--border);background:var(--white)}
+footer a{color:var(--yellow);text-decoration:none;font-weight:700}
+footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<!-- MODAL -->
+<div class="overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-ico" id="mIco">⚠️</div>
+    <div class="modal-title red" id="mTitle">משימות לא בוצעו!</div>
+    <ul class="modal-list" id="mList"></ul>
+    <button class="modal-btn" onclick="closeModal()">הבנתי — סגור</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="hd-left">
+    <div class="logo">ש</div>
+    <div>
+      <div class="hd-title">לוז ניקיון מקררים</div>
+      <div class="hd-sub">שופרסל — תברואה שבועית</div>
+    </div>
+  </div>
+  <div class="week-chip" id="weekChip">…</div>
+</header>
+
+<!-- ALERT BANNER -->
+<div class="alert-banner" id="alertBanner" onclick="showOverdueModal()">
+  ⚠️ יש משימות שלא בוצעו — לחץ לפרטים
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-wrap">
+  <div class="prog-row">
+    <span>התקדמות השבוע</span>
+    <span id="progTxt">0 / 13</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="tabs"></div>
+
+<!-- MAIN -->
+<main id="main"></main>
+
+<!-- FAB -->
+<button class="fab" onclick="goToday()" title="היום">📅</button>
+
+<!-- FOOTER -->
+<footer>
+  פותח עבור <strong>שופרסל</strong> על ידי
+  <a href="mailto:evgenchuk1@gmail.com">Evgeny Tsipis</a> | Claude AI &nbsp;·&nbsp; גרסה 1.0 · יוני 2026
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי'];
+
+// day: 0=Sun(ראשון) … 5=Fri(שישי)  |  JS getDay(): 0=Sun,1=Mon…
+const TASKS = [
+  {id:'t01', name:'מקרר ביצים',                location:'מחסן -1',      day:0},
+  {id:'t02', name:'מקרר חלב + מדפים',          location:'מחסן -1',      day:0},
+  {id:'t03', name:'מקרר ירקות',                location:'מחסן -1',      day:1},
+  {id:'t04', name:'מקפיא קפואים',              location:'מחסן -1',      day:1},
+  {id:'t05', name:'מקפיא מאפית',               location:'מאפית',        day:2},
+  {id:'t06', name:'מקרר מאפית',                location:'מאפית',        day:2},
+  {id:'t07', name:'מקרר בשר',                  location:'קצביה',        day:3},
+  {id:'t08', name:'מקרר עופות',                location:'קצביה',        day:3},
+  {id:'t09', name:'גיבוי גבינות',              location:'מעדניה גבוי',  day:4},
+  {id:'t10', name:'מקפיא מאפית 2',             location:'מחסן -1',      day:4},
+  {id:'t11', name:'מקרר החזרות',               location:'מחסן -1',      day:4},
+  {id:'t12', name:'ניקיון וסדר רמפה',          location:'רמפה',         day:5},
+  {id:'t13', name:'מקרר דגים ועופות חיצוני',  location:'אולם',         day:5},
+];
+
+const PERIODIC = [
+  {name:'ניקיון מדף תחתון — מקרר ירקות',
+   dates:['שישי 19.6.2026','שישי 19.7.2026','שישי 19.8.2026'],
+   interval:'אחת לחודש', days:[5]},
+  {name:'ניקיון מדף תחתון — מקרר חלב',
+   dates:['שלישי-חמישי 23-25.6.2026','שלישי-חמישי 23-25.8.2026','שלישי-חמישי 23-25.10.2026'],
+   interval:'אחת לחודשיים', days:[2,3,4]},
+];
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const KEY = 'shufersal_clean_v2';
+
+function weekKey(d = new Date()) {
+  const s = new Date(d);
+  s.setDate(s.getDate() - s.getDay()); // Sunday
+  return s.toISOString().slice(0,10);
+}
+
+function sundayOf(offset = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() - d.getDay() + offset);
+  return d;
+}
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+  catch { return {}; }
+}
+
+let ST = loadState();
+const CWK = weekKey();
+let prevOverdue = [];
+
+// Weekly reset
+if (ST.wk && ST.wk !== CWK) {
+  prevOverdue = TASKS.filter(t => !ST.done?.[t.id]);
+  ST = {wk: CWK, done: {}};
+  localStorage.setItem(KEY, JSON.stringify(ST));
+} else if (!ST.wk) {
+  ST = {wk: CWK, done: {}};
+  localStorage.setItem(KEY, JSON.stringify(ST));
+}
+
+function save() { localStorage.setItem(KEY, JSON.stringify(ST)); }
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function todayIdx() {
+  const d = new Date().getDay(); // 0=Sun
+  return d <= 5 ? d : -1;       // -1 on Saturday
+}
+
+function dayDate(idx) {
+  return sundayOf(idx).toLocaleDateString('he-IL',{day:'numeric',month:'numeric'});
+}
+
+function isDone(id)  { return !!ST.done?.[id]; }
+function isLate(t)   { return !isDone(t.id) && t.day < todayIdx(); }
+
+function overdueNow() { return TASKS.filter(t => isLate(t)); }
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function render() {
+  renderHeader();
+  renderTabs();
+  renderDays();
+  renderProgress();
+  renderAlertBanner();
+}
+
+function renderHeader() {
+  const s = sundayOf(0), f = sundayOf(5);
+  const o = {day:'numeric',month:'numeric'};
+  document.getElementById('weekChip').textContent =
+    `${s.toLocaleDateString('he-IL',o)} – ${f.toLocaleDateString('he-IL',o)}`;
+}
+
+function renderTabs() {
+  const ti = todayIdx();
+  document.getElementById('tabs').innerHTML = DAYS.map((dn,i) => {
+    const ts   = TASKS.filter(t => t.day === i);
+    const done = ts.filter(t => isDone(t.id)).length;
+    const late = ts.filter(t => isLate(t)).length;
+    const dotCls = late > 0 ? 'dot-bad' : done === ts.length && ts.length > 0 ? 'dot-ok' : 'dot-pend';
+    return `<div class="tab${i===ti?' today active':''}" data-i="${i}" onclick="switchDay(${i})">
+      <span class="dot ${dotCls}"></span>${dn}
+      <div class="tab-day">${dayDate(i)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderDays() {
+  const ti = todayIdx();
+  document.getElementById('main').innerHTML = DAYS.map((dn,i) => {
+    const ts = TASKS.filter(t => t.day === i);
+    let html = `<div class="day-hdr">
+      <div class="day-hname">יום ${dn}</div>
+      <div class="day-date-badge">${dayDate(i)}</div>
+    </div>`;
+
+    if (!ts.length) {
+      html += `<div class="empty"><div class="empty-ico">✅</div>אין משימות ביום זה</div>`;
+    } else {
+      html += ts.map(t => {
+        const done = isDone(t.id), late = isLate(t);
+        const cls  = done ? 'done' : late ? 'late' : '';
+        const st   = done
+          ? `<div class="cstatus ok">✅ בוצע ב-${ST.done[t.id]||''}</div>`
+          : late
+          ? `<div class="cstatus bad">⚠️ לא בוצע — באיחור!</div>`
+          : '';
+        return `<div class="card ${cls}" onclick="toggle('${t.id}')">
+          <div class="chk">${done?'✓':''}</div>
+          <div class="cinfo">
+            <div class="cname">${t.name}</div>
+            <div class="cloc">${t.location}</div>${st}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // Periodic tasks for this day
+    const pp = PERIODIC.filter(p => p.days.includes(i));
+    if (pp.length) {
+      html += `<div class="peri-sec"><div class="sec-title">📋 משימות תקופתיות</div>`;
+      html += pp.map(p => {
+        const next = p.dates.find(d => {
+          const m = d.match(/(\d+)\.(\d+)\.(\d+)/);
+          return m && new Date(+m[3],+m[2]-1,+m[1]) >= new Date();
+        }) || p.dates.at(-1);
+        return `<div class="peri-card">
+          <div class="peri-name">${p.name}</div>
+          <div class="peri-dates">📅 ${p.dates.join(' &nbsp;|&nbsp; ')}</div>
+          <div class="peri-next">הבא: ${next} &nbsp;(${p.interval})</div>
+        </div>`;
+      }).join('');
+      html += `</div>`;
+    }
+
+    return `<div class="day-sec${i===ti?' on':''}" id="d${i}">${html}</div>`;
+  }).join('');
+}
+
+function renderProgress() {
+  const done = TASKS.filter(t => isDone(t.id)).length;
+  const tot  = TASKS.length;
+  document.getElementById('progTxt').textContent  = `${done} / ${tot}`;
+  document.getElementById('progFill').style.width = Math.round(done/tot*100)+'%';
+}
+
+function renderAlertBanner() {
+  const el = document.getElementById('alertBanner');
+  overdueNow().length > 0 ? el.classList.add('on') : el.classList.remove('on');
+}
+
+// ═══════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════
+function switchDay(i) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.day-sec').forEach(s => s.classList.remove('on'));
+  document.querySelector(`[data-i="${i}"]`)?.classList.add('active');
+  document.getElementById(`d${i}`)?.classList.add('on');
+}
+
+function toggle(id) {
+  if (!ST.done) ST.done = {};
+  if (ST.done[id]) {
+    delete ST.done[id];
+  } else {
+    const now = new Date();
+    ST.done[id] = now.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  }
+  save();
+  render();
+  // Restore active tab
+  const active = document.querySelector('.tab.active')?.dataset?.i;
+  if (active !== undefined) {
+    document.querySelectorAll('.day-sec').forEach(s => s.classList.remove('on'));
+    document.getElementById(`d${active}`)?.classList.add('on');
+  }
+}
+
+function goToday() {
+  const i = todayIdx();
+  if (i >= 0) switchDay(i);
+}
+
+// ═══════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════
+function showOverdueModal() {
+  const list = overdueNow().map(t =>
+    `<li class="red">⚠️ <strong>${t.name}</strong><br><small>${DAYS[t.day]} | ${t.location}</small></li>`
+  ).join('');
+  openModal('⚠️','משימות לא בוצעו!','red',list);
+}
+
+function openModal(ico, title, cls, listHtml) {
+  document.getElementById('mIco').textContent = ico;
+  document.getElementById('mTitle').textContent = title;
+  document.getElementById('mTitle').className = `modal-title ${cls}`;
+  document.getElementById('mList').innerHTML = listHtml;
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════
+// INIT — show alerts on load
+// ═══════════════════════════════════════════════
+render();
+
+// After render: restore today's tab scroll position
+setTimeout(() => {
+  document.querySelector('.tab.active')?.scrollIntoView({inline:'center',behavior:'smooth'});
+}, 100);
+
+// Alert: prev week overdue (first session only)
+if (prevOverdue.length && !sessionStorage.getItem('pw')) {
+  sessionStorage.setItem('pw','1');
+  const list = prevOverdue.map(t =>
+    `<li class="orange">${t.name} — ${t.location}</li>`
+  ).join('');
+  setTimeout(() => openModal('📋',`מהשבוע הקודם: ${prevOverdue.length} משימות לא בוצעו`,'orange',list), 400);
+}
+// Alert: current overdue
+else if (overdueNow().length && !sessionStorage.getItem('oa')) {
+  sessionStorage.setItem('oa','1');
+  setTimeout(showOverdueModal, 400);
+}
+</script>
+</body>
+</html>
