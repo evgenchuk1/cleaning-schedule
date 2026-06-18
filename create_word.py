@@ -16,7 +16,7 @@ def set_cell_bg(cell, hex_color):
     shd.set(qn('w:fill'), hex_color)
     tcPr.append(shd)
 
-def cell_text(cell, text, bold=False, size=10, color=None,
+def cell_text(cell, text, bold=False, size=15, color=None,
               align=WD_ALIGN_PARAGRAPH.CENTER, rtl=True):
     cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
     p = cell.paragraphs[0]
@@ -37,20 +37,21 @@ def set_col_width(table, col_idx, width_cm):
         row.cells[col_idx].width = Cm(width_cm)
 
 # ── data ───────────────────────────────────────────────────────────────────
+# days is a list — items with 2 entries are cleaned twice a week
 TASKS = [
-    ('מקרר ביצים',               'מחסן -1',      'ראשון'),
-    ('מקרר חלב + מדפים',         'מחסן -1',      'ראשון'),
-    ('מקרר ירקות',               'מחסן -1',      'שני'),
-    ('מקפיא קפואים',             'מחסן -1',      'שני'),
-    ('מקפיא מאפית',              'מאפית',        'שלישי'),
-    ('מקרר מאפית',               'מאפית',        'שלישי'),
-    ('מקרר בשר',                 'קצביה',        'רביעי'),
-    ('מקרר עופות',               'קצביה',        'רביעי'),
-    ('גיבוי גבינות',             'מעדניה גבוי',  'חמישי'),
-    ('מקפיא מאפית 2',            'מחסן -1',      'חמישי'),
-    ('מקרר החזרות',              'מחסן -1',      'חמישי'),
-    ('ניקיון וסדר רמפה',         'רמפה',         'שישי'),
-    ('מקרר דגים ועופות חיצוני', 'אולם',         'שישי'),
+    ('מקרר ביצים',               'מחסן -1',      ['ראשון', 'חמישי']),
+    ('מקרר חלב + מדפים',         'מחסן -1',      ['ראשון']),
+    ('מקרר ירקות',               'מחסן -1',      ['שני']),
+    ('מקפיא קפואים',             'מחסן -1',      ['שני']),
+    ('מקפיא מאפית',              'מאפית',        ['שלישי']),
+    ('מקרר מאפית',               'מאפית',        ['שלישי']),
+    ('מקרר בשר',                 'קצביה',        ['רביעי', 'שישי']),
+    ('מקרר עופות',               'קצביה',        ['רביעי', 'שישי']),
+    ('גיבוי גבינות',             'מעדניה גבוי',  ['חמישי']),
+    ('מקפיא מאפית 2',            'מחסן -1',      ['חמישי']),
+    ('מקרר החזרות',              'מחסן -1',      ['שלישי', 'חמישי']),
+    ('ניקיון וסדר רמפה',         'רמפה',         ['חמישי', 'שישי']),
+    ('מקרר דגים ועופות חיצוני', 'אולם',         ['שישי']),
 ]
 
 DAYS_ORDER = ['ראשון','שני','שלישי','רביעי','חמישי','שישי']
@@ -89,13 +90,13 @@ title_p = doc.add_paragraph()
 title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 tr = title_p.add_run('לוז ניקיון מקררים ומקפיאים — שופרסל')
 tr.bold = True
-tr.font.size = Pt(18)
+tr.font.size = Pt(27)
 tr.font.color.rgb = RGBColor(0x1A, 0x1A, 0x2E)
 
 sub_p = doc.add_paragraph()
 sub_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 sr = sub_p.add_run('גרף שבועי | עדכון בתחילת כל שבוע | יוני 2026')
-sr.font.size = Pt(11)
+sr.font.size = Pt(17)
 sr.font.color.rgb = RGBColor(0x77, 0x77, 0x77)
 
 doc.add_paragraph()
@@ -113,34 +114,35 @@ hrow = table.rows[0]
 for ci, h in enumerate(col_headers):
     c = hrow.cells[ci]
     set_cell_bg(c, YELLOW)
-    cell_text(c, h, bold=True, size=10, color=HEADER_TEXT)
+    cell_text(c, h, bold=True, size=15, color=HEADER_TEXT)
 
 # Data rows
-for ri, (name, loc, clean_day) in enumerate(TASKS, start=1):
+for ri, (name, loc, clean_days) in enumerate(TASKS, start=1):
     row = table.rows[ri]
-    bg = DAY_COLORS.get(clean_day, 'FFFFFF')
+    bg = DAY_COLORS.get(clean_days[0], 'FFFFFF')
 
     # #
     set_cell_bg(row.cells[0], bg)
-    cell_text(row.cells[0], str(ri), size=9)
+    cell_text(row.cells[0], str(ri), size=14)
     # Name
     set_cell_bg(row.cells[1], bg)
-    cell_text(row.cells[1], name, bold=True, size=10, align=WD_ALIGN_PARAGRAPH.RIGHT)
+    cell_text(row.cells[1], name, bold=True, size=15, align=WD_ALIGN_PARAGRAPH.RIGHT)
     # Location
     set_cell_bg(row.cells[2], bg)
-    cell_text(row.cells[2], loc, size=9, align=WD_ALIGN_PARAGRAPH.CENTER)
-    # Day
+    cell_text(row.cells[2], loc, size=14, align=WD_ALIGN_PARAGRAPH.CENTER)
+    # Day(s) — show all cleaning days joined with " + "
+    day_label = ' + '.join(clean_days)
     set_cell_bg(row.cells[3], bg)
-    cell_text(row.cells[3], clean_day, bold=True, size=10, color='1A1A2E')
-    # Day checkboxes (4-9)
+    cell_text(row.cells[3], day_label, bold=True, size=14, color='1A1A2E')
+    # Day checkboxes (4-9) — mark all applicable days
     for di, d in enumerate(DAYS_ORDER):
         ci = 4 + di
-        set_cell_bg(row.cells[ci], 'FFFFFF')
-        if d == clean_day:
+        if d in clean_days:
             set_cell_bg(row.cells[ci], bg)
-            cell_text(row.cells[ci], '☐', size=14, color='1A1A2E')
+            cell_text(row.cells[ci], '☐', size=21, color='1A1A2E')
         else:
-            cell_text(row.cells[ci], '', size=9)
+            set_cell_bg(row.cells[ci], 'FFFFFF')
+            cell_text(row.cells[ci], '', size=14)
 
 # Column widths
 col_widths = [0.7, 5.5, 2.5, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]
@@ -150,7 +152,7 @@ for ci, w in enumerate(col_widths):
 
 # Row heights
 for row in table.rows:
-    row.height = Cm(0.9)
+    row.height = Cm(1.3)
 
 doc.add_paragraph()
 
@@ -159,7 +161,7 @@ p2 = doc.add_paragraph()
 p2.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 r2 = p2.add_run('📋  משימות תקופתיות (עומק)')
 r2.bold = True
-r2.font.size = Pt(13)
+r2.font.size = Pt(20)
 r2.font.color.rgb = RGBColor(0xE6, 0x7E, 0x22)
 
 peri_table = doc.add_table(rows=3, cols=4)
@@ -170,7 +172,7 @@ peri_headers = ['משימה', 'תאריך 1', 'תאריך 2', 'תאריך 3']
 for ci, h in enumerate(peri_headers):
     c = peri_table.rows[0].cells[ci]
     set_cell_bg(c, YELLOW)
-    cell_text(c, h, bold=True, size=10, color=HEADER_TEXT)
+    cell_text(c, h, bold=True, size=15, color=HEADER_TEXT)
 
 peri_data = [
     ('ניקיון מדף תחתון — מקרר ירקות',
@@ -183,11 +185,11 @@ for ri, row_data in enumerate(peri_data, start=1):
         c = peri_table.rows[ri].cells[ci]
         set_cell_bg(c, 'FFF8E1')
         align = WD_ALIGN_PARAGRAPH.RIGHT if ci == 0 else WD_ALIGN_PARAGRAPH.CENTER
-        cell_text(c, val, size=10, bold=(ci==0), align=align)
+        cell_text(c, val, size=15, bold=(ci==0), align=align)
 
-peri_table.rows[0].height = Cm(0.85)
+peri_table.rows[0].height = Cm(1.3)
 for ri in range(1,3):
-    peri_table.rows[ri].height = Cm(0.85)
+    peri_table.rows[ri].height = Cm(1.3)
 
 doc.add_paragraph()
 
@@ -195,7 +197,7 @@ doc.add_paragraph()
 leg = doc.add_paragraph()
 leg.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 lr = leg.add_run('☐ = טרם בוצע  |  ☑ = בוצע  |  ❌ = לא בוצע (סמן בעט אדום)')
-lr.font.size = Pt(9)
+lr.font.size = Pt(14)
 lr.font.color.rgb = RGBColor(0x77,0x77,0x77)
 
 # Footer
@@ -203,10 +205,10 @@ doc.add_paragraph()
 fp = doc.add_paragraph()
 fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
 fr = fp.add_run('פותח עבור שופרסל על ידי Evgeny Tsipis | Claude AI · יוני 2026')
-fr.font.size = Pt(8)
+fr.font.size = Pt(12)
 fr.font.color.rgb = RGBColor(0xAA,0xAA,0xAA)
 
 # ── SAVE ───────────────────────────────────────────────────────────────────
-out = r'C:\Users\etsip\OneDrive\TSIPIS\Job\שופרסל\לוז ניקיון מקררים ומקפיאים - עדכון.docx'
+out = r'C:\Users\etsip\OneDrive\TSIPIS\Job\שופרסל\לוחות זמנים\לוז ניקיון מקררים ומקפיאים - עדכון.docx'
 doc.save(out)
 sys.stdout.buffer.write(b'Word saved OK\n')
