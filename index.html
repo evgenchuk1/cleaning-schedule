@@ -2,203 +2,295 @@
 <html dir="rtl" lang="he">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#1A1A2E">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="ניקיון מקררים">
+<meta name="theme-color" content="#CC0030">
 <title>לוז ניקיון מקררים | שופרסל</title>
 <link rel="manifest" href="manifest.json">
 <style>
 :root{
-  --yellow:#FFCC00; --dark:#1A1A2E; --red:#CC0000; --red-bg:#FFF0F0;
-  --green:#27AE60;  --green-bg:#E8F8F1; --orange:#E67E22;
-  --gray:#95A5A6;   --light:#F2F2F5;   --white:#fff; --border:#E0E0E0;
-  --shadow:0 2px 10px rgba(0,0,0,.10);
+  --primary:#CC0030; --primary-mid:#E8003A; --primary-dark:#990020;
+  --bg:#FFECEC; --surface:#ffffff; --text:#2A0010; --muted:#885566;
+  --green:#1E8449; --green-bg:#E9F7EF;
+  --orange:#D35400; --orange-bg:#FEF9E7;
+  --shadow:0 2px 12px rgba(180,0,40,.13);
+  --radius:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Segoe UI',Arial,sans-serif;background:var(--light);color:var(--dark);
-     direction:rtl;min-height:100vh;display:flex;flex-direction:column;font-size:18px}
+body{font-family:-apple-system,'Segoe UI',Arial,sans-serif;background:var(--bg);
+     color:var(--text);direction:rtl;min-height:100vh;
+     padding-bottom:110px;-webkit-font-smoothing:antialiased}
 
 /* ═══ HEADER ═══ */
-header{background:var(--dark);color:var(--yellow);padding:14px 18px;
-       display:flex;align-items:center;justify-content:space-between;
-       position:sticky;top:0;z-index:300;box-shadow:0 4px 14px rgba(0,0,0,.45)}
-.hd-left{display:flex;align-items:center;gap:13px}
-.logo{background:var(--yellow);color:var(--dark);font-weight:900;font-size:26px;
-      width:52px;height:52px;border-radius:10px;display:flex;align-items:center;
-      justify-content:center;flex-shrink:0}
-.hd-title{font-size:26px;font-weight:800;line-height:1.15}
-.hd-sub{font-size:15px;color:#bbb;margin-top:1px}
-.week-chip{background:var(--yellow);color:var(--dark);border-radius:22px;
-           padding:6px 16px;font-size:15px;font-weight:800;white-space:nowrap}
-
-/* ═══ BACK BUTTON (day pages) ═══ */
-.back-btn{display:none;align-items:center;gap:8px;background:rgba(255,204,0,.15);
-          border:none;color:var(--yellow);font-size:18px;font-weight:700;
-          cursor:pointer;padding:6px 14px;border-radius:22px;font-family:inherit}
-.back-btn.vis{display:flex}
-.back-btn:active{opacity:.75}
+.app-header{
+  background:linear-gradient(135deg,#DD0030 0%,#AA0020 100%);
+  color:#fff;padding:14px 16px 12px;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 4px 20px rgba(180,0,40,.55)
+}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.header-brand{display:flex;align-items:center;gap:12px}
+.header-logo{width:50px;height:50px;border-radius:12px;object-fit:cover;
+             flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.header-titles{display:flex;flex-direction:column}
+.app-title{font-size:1.55rem;font-weight:900;letter-spacing:-.3px;line-height:1.2;
+           text-shadow:0 1px 3px rgba(0,0,0,.25)}
+.app-subtitle{font-size:.9rem;opacity:.82;margin-top:2px}
+.hd-actions{display:flex;align-items:center;gap:10px}
+.btn-mail{
+  background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.45);
+  color:#fff;border-radius:50%;width:46px;height:46px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;cursor:pointer;text-decoration:none;
+  transition:all .18s;flex-shrink:0
+}
+.btn-mail:active{opacity:.6}
+.btn-back{
+  background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.45);
+  color:#fff;border-radius:22px;padding:8px 18px;
+  font-size:1.05rem;font-weight:800;cursor:pointer;
+  font-family:inherit;display:none;align-items:center;gap:6px
+}
+.btn-back.vis{display:flex}
+.btn-back:active{opacity:.6}
+.week-strip{
+  background:rgba(0,0,0,.2);padding:6px 16px 8px;
+  text-align:center;font-size:.95rem;color:rgba(255,255,255,.88);font-weight:700;margin-top:8px
+}
 
 /* ═══ ALERT BANNER ═══ */
-.alert-bar{display:none;background:var(--red);color:#fff;padding:13px 18px;
-           font-size:17px;font-weight:700;cursor:pointer;text-align:center}
-.alert-bar.on{display:block;animation:blink 1.6s ease infinite}
-@keyframes blink{0%,100%{background:var(--red)}50%{background:#E53935}}
+.alert-bar{
+  display:none;background:linear-gradient(90deg,#880020,#CC0030);
+  color:#fff;padding:14px 18px;font-size:1.15rem;font-weight:700;
+  cursor:pointer;text-align:center
+}
+.alert-bar.on{display:block;animation:blink 1.8s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.7}}
 
 /* ═══ PROGRESS ═══ */
-.prog{background:var(--white);padding:13px 18px;border-bottom:1px solid var(--border)}
-.prog-row{display:flex;justify-content:space-between;font-size:16px;color:#555;margin-bottom:7px}
-.prog-bar{height:9px;background:#e0e0e0;border-radius:5px;overflow:hidden}
-.prog-fill{height:100%;background:var(--green);border-radius:5px;transition:width .4s}
+.prog-wrap{
+  background:var(--surface);padding:12px 18px;
+  border-bottom:2px solid #f5c0c0;
+  display:flex;justify-content:space-between;align-items:center;gap:14px
+}
+.prog-left{flex:1}
+.prog-label{font-size:1rem;color:var(--muted);margin-bottom:6px;font-weight:700}
+.prog-bar{height:10px;background:#ffc0c0;border-radius:6px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#CC0030,#E8003A);
+           border-radius:6px;transition:width .4s}
+.prog-count{font-size:1.6rem;font-weight:900;color:var(--primary);white-space:nowrap}
 
-/* ═══ VIEWS ═══ */
-main{flex:1;padding:16px 16px 90px;max-width:620px;margin:0 auto;width:100%}
+/* ═══ MAIN ═══ */
+main{padding:14px 14px 20px;max-width:620px;margin:0 auto}
 .view{display:none}.view.on{display:block}
+.sec-title{
+  font-size:1.5rem;font-weight:900;color:var(--primary);
+  margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid var(--primary)
+}
 
-/* ═══ HOME — WEEK OVERVIEW ═══ */
-.home-title{font-size:22px;font-weight:800;color:var(--dark);
-            margin-bottom:16px;padding-bottom:10px;border-bottom:3px solid var(--yellow)}
-
-/* Day block */
-.day-block{background:var(--white);border-radius:14px;margin-bottom:14px;
-           box-shadow:var(--shadow);overflow:hidden}
-.day-block-hdr{display:flex;align-items:center;justify-content:space-between;
-               padding:13px 16px;cursor:pointer;background:var(--dark);
-               transition:background .2s}
-.day-block-hdr:active{background:#2c2c4a}
-.day-block-hdr.today-hdr{background:#1a3a1a}
-.day-block-hdr.all-done{background:#1a3a1a}
-.day-block-hdr.has-late{background:#3a1a1a}
-.dh-name{font-size:20px;font-weight:800;color:var(--yellow)}
-.dh-name.today-tag::after{content:' — היום';font-size:14px;color:#aaa;font-weight:400}
+/* ═══ DAY BLOCK ═══ */
+.day-block{background:var(--surface);border-radius:var(--radius);
+           margin-bottom:13px;box-shadow:var(--shadow);overflow:hidden}
+.day-block-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;cursor:pointer;
+  background:linear-gradient(135deg,#DD0030,#AA0020);transition:opacity .2s
+}
+.day-block-hdr:active{opacity:.8}
+.day-block-hdr.all-done{background:linear-gradient(135deg,#1E8449,#145A32)}
+.day-block-hdr.has-late{background:linear-gradient(135deg,#6E1010,#990020)}
+.day-block-hdr.today-hdr{background:linear-gradient(135deg,#8B0000,#CC0030);
+  box-shadow:inset 0 0 0 3px rgba(255,220,0,.6)}
+.dh-left .dh-name{font-size:1.3rem;font-weight:900;color:#fff}
+.dh-name.today-mark::after{content:' ◀ היום';font-size:.82rem;color:rgba(255,255,220,.9);font-weight:500}
+.dh-left .dh-date{font-size:.88rem;color:rgba(255,255,255,.75);margin-top:2px}
 .dh-right{display:flex;align-items:center;gap:10px}
-.dh-count{font-size:15px;color:#ccc}
-.dh-arrow{font-size:18px;color:var(--yellow)}
-.dh-date{font-size:14px;color:#999}
+.dh-count{font-size:1rem;color:rgba(255,255,255,.85);font-weight:700}
+.dh-arrow{font-size:1.4rem;color:#fff;opacity:.8}
 
-/* Compact task row on home page */
-.task-row{display:flex;align-items:center;gap:14px;padding:12px 16px;
-          border-bottom:1px solid var(--border);cursor:pointer;
-          transition:background .15s;user-select:none}
+/* ═══ TASK ROW (home) ═══ */
+.task-row{
+  display:flex;align-items:center;gap:14px;padding:13px 16px;
+  border-bottom:1px solid #fce0e0;cursor:pointer;
+  transition:background .15s;user-select:none
+}
 .task-row:last-child{border-bottom:none}
-.task-row:active{background:#f0f0f0}
+.task-row:active{background:#fff5f5}
 .task-row.row-done{background:var(--green-bg)}
-.task-row.row-late{background:var(--red-bg);animation:row-pulse 2s ease infinite}
-@keyframes row-pulse{0%,100%{background:var(--red-bg)}50%{background:#FFE0E0}}
-.tr-ico{width:34px;height:34px;border-radius:50%;border:2.5px solid #ccc;
-        display:flex;align-items:center;justify-content:center;
-        font-size:19px;flex-shrink:0;background:#fafafa;transition:all .2s}
+.task-row.row-late{background:#fff0f0;animation:rowblink 2s ease infinite}
+@keyframes rowblink{0%,100%{background:#fff0f0}50%{background:#ffe0e0}}
+.tr-ico{
+  width:38px;height:38px;border-radius:50%;border:2.5px solid #f5b0b0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.25rem;flex-shrink:0;background:#fff8f8;transition:all .2s
+}
 .task-row.row-done .tr-ico{background:var(--green);border-color:var(--green);color:#fff}
-.task-row.row-late .tr-ico{border-color:var(--red);background:var(--red-bg)}
+.task-row.row-late .tr-ico{border-color:var(--primary);background:#ffeeee}
 .tr-info{flex:1;min-width:0}
-.tr-name{font-size:18px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr-name{font-size:1.2rem;font-weight:800;
+         white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .task-row.row-done .tr-name{text-decoration:line-through;color:#aaa}
-.tr-loc{font-size:14px;color:#aaa;margin-top:2px}
+.tr-loc{font-size:.92rem;color:#aa6677;margin-top:3px}
 .tr-loc::before{content:'📍 '}
-.tr-status{font-size:13px;font-weight:700;margin-top:3px}
-.tr-status.ok{color:var(--green)}.tr-status.bad{color:var(--red)}
+.tr-status{font-size:.88rem;font-weight:800;margin-top:4px}
+.tr-status.ok{color:var(--green)}.tr-status.bad{color:var(--primary)}
 
 /* ═══ DAY DETAIL VIEW ═══ */
-.day-view-hdr{display:flex;align-items:center;justify-content:space-between;
-              margin-bottom:18px;padding-bottom:12px;border-bottom:3px solid var(--yellow)}
-.day-view-name{font-size:28px;font-weight:800}
-.day-view-date{font-size:16px;color:#777;background:var(--light);
-               padding:5px 14px;border-radius:14px}
+.dv-hdr{display:flex;align-items:center;justify-content:space-between;
+        margin-bottom:18px;padding-bottom:12px;border-bottom:3px solid var(--primary)}
+.dv-name{font-size:1.9rem;font-weight:900;color:var(--primary)}
+.dv-date{font-size:1rem;color:var(--muted);background:#ffeaed;
+         padding:6px 16px;border-radius:16px;font-weight:700}
 
-/* Big task card (day detail) */
-.card{background:var(--white);border-radius:14px;padding:18px 18px;margin-bottom:12px;
-      display:flex;align-items:center;gap:16px;box-shadow:var(--shadow);
-      border-right:6px solid var(--gray);cursor:pointer;transition:all .2s;user-select:none}
-.card:active{transform:scale(.98)}
+/* ═══ TASK CARD (day detail) ═══ */
+.card{
+  background:var(--surface);border-radius:var(--radius);padding:18px 18px;margin-bottom:12px;
+  display:flex;align-items:center;gap:16px;box-shadow:var(--shadow);
+  border-right:6px solid #fca5a5;cursor:pointer;transition:all .2s;user-select:none
+}
+.card:active{transform:scale(.975)}
 .card.done{background:var(--green-bg);border-right-color:var(--green)}
-.card.late{background:var(--red-bg);border-right-color:var(--red);
-           animation:card-pulse 1.8s ease infinite}
-@keyframes card-pulse{0%,100%{border-right-color:var(--red)}50%{border-right-color:var(--orange)}}
-.chk{width:38px;height:38px;border-radius:50%;border:3px solid #ccc;
-     display:flex;align-items:center;justify-content:center;
-     flex-shrink:0;font-size:22px;transition:all .2s;background:#fafafa}
+.card.late{background:#fff0f0;border-right-color:var(--primary);
+           animation:cardblink 1.8s ease infinite}
+@keyframes cardblink{0%,100%{border-right-color:var(--primary)}50%{border-right-color:#880020}}
+.chk{
+  width:44px;height:44px;border-radius:50%;border:3px solid #fca5a5;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:1.5rem;transition:all .2s;background:#fff8f8
+}
 .card.done .chk{background:var(--green);border-color:var(--green);color:#fff}
-.card.late .chk{border-color:var(--red);background:var(--red-bg)}
+.card.late .chk{border-color:var(--primary);background:#ffeeee}
 .cinfo{flex:1;min-width:0}
-.cname{font-size:21px;font-weight:800}
+.cname{font-size:1.35rem;font-weight:900}
 .card.done .cname{text-decoration:line-through;color:#aaa}
-.cloc{font-size:16px;color:#999;margin-top:4px}
+.cloc{font-size:1.05rem;color:#aa6677;margin-top:5px}
 .cloc::before{content:'📍 '}
-.cst{font-size:15px;font-weight:700;margin-top:5px}
-.cst.ok{color:var(--green)}.cst.bad{color:var(--red)}
+.cst{font-size:1rem;font-weight:800;margin-top:6px}
+.cst.ok{color:var(--green)}.cst.bad{color:var(--primary)}
 
-/* ═══ PERIODIC SECTION ═══ */
+/* ═══ PERIODIC ═══ */
 .peri-wrap{margin-top:22px}
-.sec-lbl{font-size:18px;font-weight:800;background:var(--yellow);color:var(--dark);
-         padding:9px 16px;border-radius:10px;margin-bottom:12px}
-.peri-card{background:var(--white);border-radius:14px;padding:16px 18px;
-           margin-bottom:12px;box-shadow:var(--shadow);border-right:6px solid var(--orange)}
-.peri-name{font-size:18px;font-weight:800}
-.peri-dates{font-size:14px;color:#888;margin-top:5px}
-.peri-next{font-size:16px;color:var(--orange);font-weight:700;margin-top:6px}
+.peri-hdr{
+  font-size:1.15rem;font-weight:900;background:linear-gradient(135deg,#CC0030,#AA0020);
+  color:#fff;padding:10px 16px;border-radius:10px;margin-bottom:12px
+}
+.peri-card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);border-right:6px solid var(--orange)
+}
+.peri-name{font-size:1.1rem;font-weight:900}
+.peri-dates{font-size:.9rem;color:#888;margin-top:5px}
+.peri-next{font-size:1rem;color:var(--orange);font-weight:800;margin-top:6px}
 
-/* ═══ EMPTY ═══ */
-.empty{text-align:center;padding:50px 20px;color:#ccc;font-size:18px}
-.empty-ico{font-size:52px;margin-bottom:12px}
-
-/* ═══ MODAL ═══ */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;
-         display:flex;align-items:center;justify-content:center;padding:18px}
-.modal{background:var(--white);border-radius:20px;padding:28px 22px;
-       max-width:380px;width:100%;box-shadow:0 14px 50px rgba(0,0,0,.28);
-       max-height:88vh;overflow-y:auto}
-.m-ico{font-size:54px;text-align:center;margin-bottom:12px}
-.m-title{font-size:24px;font-weight:800;text-align:center;margin-bottom:18px}
-.m-title.red{color:var(--red)}.m-title.orange{color:var(--orange)}
+/* ═══ ALERT MODAL ═══ */
+.overlay{
+  position:fixed;inset:0;background:rgba(80,0,20,.6);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:18px;
+  backdrop-filter:blur(3px)
+}
+.overlay.on{display:flex}
+.modal{
+  background:var(--surface);border-radius:22px;padding:26px 22px;
+  max-width:380px;width:100%;box-shadow:0 8px 40px rgba(180,0,40,.3);
+  max-height:88vh;overflow-y:auto
+}
+.m-ico{font-size:52px;text-align:center;margin-bottom:10px}
+.m-title{font-size:1.4rem;font-weight:900;text-align:center;margin-bottom:16px;color:var(--primary)}
 .m-list{list-style:none;margin-bottom:20px}
-.m-list li{padding:11px 14px;border-radius:10px;margin-bottom:8px;
-           font-size:16px;border-right:4px solid}
-.m-list li.red{background:var(--red-bg);border-color:var(--red)}
-.m-list li.orange{background:#FFF8E1;border-color:var(--orange)}
-.m-btn{width:100%;padding:16px;background:var(--dark);color:var(--yellow);
-       border:none;border-radius:12px;font-size:18px;font-weight:800;
-       cursor:pointer;font-family:inherit}
+.m-list li{padding:11px 14px;border-radius:10px;margin-bottom:8px;font-size:1rem;border-right:4px solid}
+.m-list li.red{background:#fff0f0;border-color:var(--primary)}
+.m-list li.orange{background:#fffbf0;border-color:var(--orange)}
+.m-btn{
+  width:100%;padding:16px;color:#fff;border:none;border-radius:12px;
+  font-size:1.1rem;font-weight:900;cursor:pointer;font-family:inherit;
+  background:linear-gradient(135deg,#E8003A,#AA0020);box-shadow:0 4px 14px rgba(180,0,40,.4)
+}
 .m-btn:active{opacity:.85}
 
-/* ═══ FAB ═══ */
-.fab{position:fixed;bottom:76px;left:18px;width:54px;height:54px;
-     background:var(--dark);color:var(--yellow);border-radius:50%;border:none;
-     font-size:22px;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.38);
-     display:flex;align-items:center;justify-content:center;z-index:100}
+/* ═══ COPYRIGHT MODAL ═══ */
+.cp-overlay{
+  position:fixed;inset:0;z-index:600;background:rgba(80,0,20,.6);
+  display:none;align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(3px)
+}
+.cp-overlay.on{display:flex}
+.cp-box{background:#fff;border-radius:22px;padding:26px 22px;
+        max-width:360px;width:100%;direction:rtl;box-shadow:0 8px 40px rgba(180,0,40,.25)}
+.cp-title{font-size:1.25rem;font-weight:900;color:var(--primary);margin-bottom:14px;text-align:center}
+.cp-text{font-size:1rem;line-height:1.85;color:#444}
+.cp-close{
+  margin-top:20px;width:100%;background:linear-gradient(135deg,#E8003A,#AA0020);
+  color:#fff;border:none;border-radius:13px;padding:14px;
+  font-size:1.05rem;font-weight:900;cursor:pointer;font-family:inherit;
+  box-shadow:0 4px 14px rgba(180,0,40,.35)
+}
+.cp-close:active{opacity:.85}
 
-/* ═══ COPYRIGHT FOOTER ═══ */
-.copyright{text-align:center;padding:18px 16px 12px;font-size:15px;
-           color:var(--gray);border-top:1px solid var(--border);background:var(--white)}
-.copyright a{color:var(--gray);text-decoration:none}
-.copyright a:hover{text-decoration:underline}
+/* ═══ FOOTER ═══ */
+.app-footer{
+  position:fixed;bottom:0;left:0;right:0;text-align:center;
+  padding:8px 0 env(safe-area-inset-bottom,10px);
+  background:rgba(255,240,240,.97);border-top:1px solid #f5c0c0;z-index:100
+}
+.cp-link{font-size:.82rem;color:rgba(140,0,30,.5);cursor:pointer;text-decoration:underline}
+
+/* ═══ FAB ═══ */
+.fab{
+  position:fixed;bottom:54px;left:18px;width:54px;height:54px;
+  background:linear-gradient(145deg,#E8003A,#AA0020);color:#fff;
+  border-radius:50%;border:none;font-size:1.5rem;cursor:pointer;
+  box-shadow:0 5px 18px rgba(180,0,40,.55),0 3px 0 #730016;
+  display:flex;align-items:center;justify-content:center;z-index:90;
+  transition:transform .12s,box-shadow .12s
+}
+.fab:active{transform:scale(.88) translateY(3px);box-shadow:0 2px 8px rgba(180,0,40,.4),0 1px 0 #730016}
 </style>
 </head>
 <body>
 
-<!-- MODAL -->
-<div class="overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
+<!-- ALERT MODAL -->
+<div class="overlay" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="m-ico" id="mIco">⚠️</div>
-    <div class="m-title red" id="mTitle">משימות לא בוצעו!</div>
+    <div class="m-title" id="mTitle">משימות לא בוצעו!</div>
     <ul class="m-list" id="mList"></ul>
     <button class="m-btn" onclick="closeModal()">הבנתי — סגור</button>
   </div>
 </div>
 
+<!-- COPYRIGHT MODAL -->
+<div class="cp-overlay" id="cpOverlay" onclick="if(event.target===this)cpClose()">
+  <div class="cp-box">
+    <div class="cp-title">זכויות יוצרים</div>
+    <div class="cp-text">
+      © כל הזכויות שמורות ליבגני ציפיס 2026<br><br>
+      יישום זה פותח ועוצב על ידי יבגני ציפיס לצורך ניהול לוז ניקיון מקררים ומקפיאים בסניף שופרסל.<br><br>
+      חל איסור על העתקה, הפצה או שימוש מסחרי בכל חלק מהיישום ללא אישור בכתב מהמחבר.<br><br>
+      כל הסימנים המסחריים הם רכושם של בעליהם בהתאמה.
+    </div>
+    <button class="cp-close" onclick="cpClose()">סגור</button>
+  </div>
+</div>
+
 <!-- HEADER -->
-<header>
-  <div class="hd-left">
-    <div class="logo">ש</div>
-    <div>
-      <div class="hd-title">לוז ניקיון מקררים</div>
-      <div class="hd-sub">שופרסל — תברואה שבועית</div>
+<header class="app-header">
+  <div class="header-row">
+    <div class="header-brand">
+      <img class="header-logo" src="logo.jpg" alt="שופרסל">
+      <div class="header-titles">
+        <div class="app-title">לוז ניקיון מקררים</div>
+        <div class="app-subtitle">שופרסל — תברואה שבועית</div>
+      </div>
+    </div>
+    <div class="hd-actions">
+      <a class="btn-mail" href="mailto:evgenchuk1@gmail.com" title="פתח דואר">👤</a>
+      <button class="btn-back" id="backBtn" onclick="goHome()">← חזרה</button>
     </div>
   </div>
-  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
-    <div class="week-chip" id="weekChip">…</div>
-    <button class="back-btn" id="backBtn" onclick="goHome()">← חזרה</button>
-  </div>
+  <div class="week-strip" id="weekStrip">…</div>
 </header>
 
 <!-- ALERT BANNER -->
@@ -206,48 +298,41 @@ main{flex:1;padding:16px 16px 90px;max-width:620px;margin:0 auto;width:100%}
   ⚠️ יש משימות שלא בוצעו — לחץ לפרטים
 </div>
 
-<!-- PROGRESS (always visible) -->
-<div class="prog">
-  <div class="prog-row">
-    <span>התקדמות השבוע</span>
-    <span id="progTxt">0 / 13</span>
+<!-- PROGRESS -->
+<div class="prog-wrap">
+  <div class="prog-left">
+    <div class="prog-label">התקדמות השבוע</div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
   </div>
-  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="prog-count" id="progCount">0/13</div>
 </div>
 
 <!-- MAIN -->
 <main id="mainWrap">
-
-  <!-- ── HOME VIEW ── -->
   <div class="view on" id="viewHome">
-    <div class="home-title">סקירה שבועית — כל המשימות</div>
+    <div class="sec-title" style="margin-top:14px">סקירה שבועית — כל המשימות</div>
     <div id="homeBlocks"></div>
   </div>
-
-  <!-- ── DAY DETAIL VIEWS (d0–d5) ── -->
   <div class="view" id="viewDay">
-    <div class="day-view-hdr">
-      <div class="day-view-name" id="dvName">יום …</div>
-      <div class="day-view-date" id="dvDate">…</div>
+    <div class="dv-hdr" style="margin-top:14px">
+      <div class="dv-name" id="dvName">יום …</div>
+      <div class="dv-date" id="dvDate">…</div>
     </div>
     <div id="dvCards"></div>
   </div>
-
 </main>
 
-<!-- FAB — today -->
-<button class="fab" onclick="goToday()" title="היום">📅</button>
+<!-- FAB -->
+<button class="fab" onclick="goToday()" title="קפוץ להיום">📅</button>
 
 <!-- FOOTER -->
-<div class="copyright">© <a href="mailto:evgenchuk1@gmail.com">יבגני ציפיס</a> 2026</div>
+<footer class="app-footer">
+  <span class="cp-link" id="cpLink">© יבגני ציפיס 2026 — כל הזכויות שמורות</span>
+</footer>
 
 <script>
-// ══════════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════════
-const DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי'];
-
-const TASKS = [
+const DAYS=['ראשון','שני','שלישי','רביעי','חמישי','שישי'];
+const TASKS=[
   {id:'t01',name:'מקרר ביצים',               location:'מחסן -1',     day:0},
   {id:'t02',name:'מקרר חלב + מדפים',         location:'מחסן -1',     day:0},
   {id:'t03',name:'מקרר ירקות',               location:'מחסן -1',     day:1},
@@ -262,35 +347,25 @@ const TASKS = [
   {id:'t12',name:'ניקיון וסדר רמפה',         location:'רמפה',        day:5},
   {id:'t13',name:'מקרר דגים ועופות חיצוני', location:'אולם',        day:5},
 ];
-
-const PERIODIC = [
+const PERIODIC=[
   {name:'ניקיון מדף תחתון — מקרר ירקות',
    dates:['שישי 19.6.2026','שישי 19.7.2026','שישי 19.8.2026'],
-   interval:'אחת לחודש', days:[5]},
+   interval:'אחת לחודש',days:[5]},
   {name:'ניקיון מדף תחתון — מקרר חלב',
    dates:['שלישי-חמישי 23-25.6.2026','שלישי-חמישי 23-25.8.2026','שלישי-חמישי 23-25.10.2026'],
-   interval:'אחת לחודשיים', days:[2,3,4]},
+   interval:'אחת לחודשיים',days:[2,3,4]},
 ];
 
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
-const KEY = 'shufersal_clean_v3';
-
-function wkKey(d=new Date()){
-  const s=new Date(d); s.setDate(s.getDate()-s.getDay());
-  return s.toISOString().slice(0,10);
-}
-function sundayOf(off=0){
-  const d=new Date(); d.setDate(d.getDate()-d.getDay()+off); return d;
-}
+const KEY='shufersal_clean_v3';
+function wkKey(d=new Date()){const s=new Date(d);s.setDate(s.getDate()-s.getDay());return s.toISOString().slice(0,10);}
+function sundayOf(off=0){const d=new Date();d.setDate(d.getDate()-d.getDay()+off);return d;}
 function loadST(){try{return JSON.parse(localStorage.getItem(KEY))||{};}catch{return {};}}
 
 let ST=loadST();
 const CWK=wkKey();
 let prevOD=[];
 
-if(ST.wk && ST.wk!==CWK){
+if(ST.wk&&ST.wk!==CWK){
   prevOD=TASKS.filter(t=>!ST.done?.[t.id]);
   ST={wk:CWK,done:{}}; localStorage.setItem(KEY,JSON.stringify(ST));
 }else if(!ST.wk){
@@ -298,45 +373,30 @@ if(ST.wk && ST.wk!==CWK){
 }
 function save(){localStorage.setItem(KEY,JSON.stringify(ST));}
 
-// ══════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════
 function todayIdx(){const d=new Date().getDay();return d<=5?d:-1;}
 function dayDate(i){return sundayOf(i).toLocaleDateString('he-IL',{day:'numeric',month:'numeric'});}
 function isDone(id){return !!ST.done?.[id];}
 function isLate(t){return !isDone(t.id)&&t.day<todayIdx();}
 function overdueNow(){return TASKS.filter(t=>isLate(t));}
 
-// ══════════════════════════════════════════════
-// RENDER — HEADER
-// ══════════════════════════════════════════════
-function renderHeader(){
-  const s=sundayOf(0),f=sundayOf(5),o={day:'numeric',month:'numeric'};
-  document.getElementById('weekChip').textContent=
-    `${s.toLocaleDateString('he-IL',o)} – ${f.toLocaleDateString('he-IL',o)}`;
+function renderWeekStrip(){
+  const o={day:'numeric',month:'numeric'};
+  document.getElementById('weekStrip').textContent=
+    `שבוע: ${sundayOf(0).toLocaleDateString('he-IL',o)} – ${sundayOf(5).toLocaleDateString('he-IL',o)}`;
 }
 
-// ══════════════════════════════════════════════
-// RENDER — PROGRESS
-// ══════════════════════════════════════════════
 function renderProgress(){
   const done=TASKS.filter(t=>isDone(t.id)).length,tot=TASKS.length;
-  document.getElementById('progTxt').textContent=`${done} / ${tot}`;
+  document.getElementById('progCount').textContent=`${done}/${tot}`;
   document.getElementById('progFill').style.width=Math.round(done/tot*100)+'%';
 }
 
-// ══════════════════════════════════════════════
-// RENDER — ALERT BANNER
-// ══════════════════════════════════════════════
 function renderAlertBar(){
-  overdueNow().length>0
+  overdueNow().length
     ?document.getElementById('alertBar').classList.add('on')
     :document.getElementById('alertBar').classList.remove('on');
 }
 
-// ══════════════════════════════════════════════
-// RENDER — HOME (week overview)
-// ══════════════════════════════════════════════
 function renderHome(){
   const ti=todayIdx();
   let html='';
@@ -346,11 +406,10 @@ function renderHome(){
     const lateCnt=ts.filter(t=>isLate(t)).length;
     const allDone=doneCnt===ts.length&&ts.length>0;
     const hdrCls=lateCnt>0?'has-late':allDone?'all-done':i===ti?'today-hdr':'';
-    const nameCls=i===ti?'dh-name today-tag':'dh-name';
-
+    const nameCls=i===ti?'dh-name today-mark':'dh-name';
     html+=`<div class="day-block">
       <div class="day-block-hdr ${hdrCls}" onclick="openDayView(${i})">
-        <div>
+        <div class="dh-left">
           <div class="${nameCls}">יום ${dn}</div>
           <div class="dh-date">${dayDate(i)}</div>
         </div>
@@ -359,19 +418,17 @@ function renderHome(){
           <div class="dh-arrow">›</div>
         </div>
       </div>`;
-
-    if(ts.length===0){
-      html+=`<div style="padding:14px 18px;font-size:16px;color:#aaa">אין משימות ביום זה</div>`;
+    if(!ts.length){
+      html+=`<div style="padding:14px 18px;font-size:1rem;color:#aaa">אין משימות ביום זה</div>`;
     }else{
       ts.forEach(t=>{
         const done=isDone(t.id),late=isLate(t);
         const rowCls=done?'row-done':late?'row-late':'';
-        const ico=done?'✓':'';
         const st=done
           ?`<div class="tr-status ok">✅ בוצע ב-${ST.done[t.id]||''}</div>`
           :late?`<div class="tr-status bad">⚠️ לא בוצע — באיחור!</div>`:'';
         html+=`<div class="task-row ${rowCls}" onclick="toggle('${t.id}','home')">
-          <div class="tr-ico">${ico}</div>
+          <div class="tr-ico">${done?'✓':''}</div>
           <div class="tr-info">
             <div class="tr-name">${t.name}</div>
             <div class="tr-loc">${t.location}</div>${st}
@@ -384,47 +441,34 @@ function renderHome(){
   document.getElementById('homeBlocks').innerHTML=html;
 }
 
-// ══════════════════════════════════════════════
-// RENDER — DAY DETAIL
-// ══════════════════════════════════════════════
 function renderDayView(i){
   const ts=TASKS.filter(t=>t.day===i);
   document.getElementById('dvName').textContent=`יום ${DAYS[i]}`;
   document.getElementById('dvDate').textContent=dayDate(i);
-
   let html='';
-  if(!ts.length){
-    html=`<div class="empty"><div class="empty-ico">✅</div>אין משימות ביום זה</div>`;
-  }else{
-    ts.forEach(t=>{
-      const done=isDone(t.id),late=isLate(t);
-      const cls=done?'done':late?'late':'';
-      const st=done
-        ?`<div class="cst ok">✅ בוצע ב-${ST.done[t.id]||''}</div>`
-        :late?`<div class="cst bad">⚠️ לא בוצע — באיחור!</div>`:'';
-      html+=`<div class="card ${cls}" onclick="toggle('${t.id}','day',${i})">
-        <div class="chk">${done?'✓':''}</div>
-        <div class="cinfo">
-          <div class="cname">${t.name}</div>
-          <div class="cloc">${t.location}</div>${st}
-        </div>
-      </div>`;
-    });
-  }
-
-  // Periodic tasks
+  ts.forEach(t=>{
+    const done=isDone(t.id),late=isLate(t);
+    const cls=done?'done':late?'late':'';
+    const st=done
+      ?`<div class="cst ok">✅ בוצע ב-${ST.done[t.id]||''}</div>`
+      :late?`<div class="cst bad">⚠️ לא בוצע — באיחור!</div>`:'';
+    html+=`<div class="card ${cls}" onclick="toggle('${t.id}','day',${i})">
+      <div class="chk">${done?'✓':''}</div>
+      <div class="cinfo">
+        <div class="cname">${t.name}</div>
+        <div class="cloc">${t.location}</div>${st}
+      </div>
+    </div>`;
+  });
   const pp=PERIODIC.filter(p=>p.days.includes(i));
   if(pp.length){
-    html+=`<div class="peri-wrap"><div class="sec-lbl">📋 משימות תקופתיות</div>`;
+    html+=`<div class="peri-wrap"><div class="peri-hdr">📋 משימות תקופתיות</div>`;
     pp.forEach(p=>{
-      const next=p.dates.find(d=>{
-        const m=d.match(/(\d+)\.(\d+)\.(\d+)/);
-        return m&&new Date(+m[3],+m[2]-1,+m[1])>=new Date();
-      })||p.dates.at(-1);
+      const next=p.dates.find(d=>{const m=d.match(/(\d+)\.(\d+)\.(\d+)/);return m&&new Date(+m[3],+m[2]-1,+m[1])>=new Date();})||p.dates.at(-1);
       html+=`<div class="peri-card">
         <div class="peri-name">${p.name}</div>
-        <div class="peri-dates">📅 ${p.dates.join('&nbsp; | &nbsp;')}</div>
-        <div class="peri-next">הבא: ${next} &nbsp;(${p.interval})</div>
+        <div class="peri-dates">📅 ${p.dates.join(' | ')}</div>
+        <div class="peri-next">הבא: ${next} (${p.interval})</div>
       </div>`;
     });
     html+=`</div>`;
@@ -432,9 +476,6 @@ function renderDayView(i){
   document.getElementById('dvCards').innerHTML=html;
 }
 
-// ══════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════
 function openDayView(i){
   renderDayView(i);
   document.getElementById('viewHome').classList.remove('on');
@@ -442,22 +483,14 @@ function openDayView(i){
   document.getElementById('backBtn').classList.add('vis');
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
 function goHome(){
   document.getElementById('viewDay').classList.remove('on');
   document.getElementById('viewHome').classList.add('on');
   document.getElementById('backBtn').classList.remove('vis');
   renderHome();
 }
+function goToday(){const i=todayIdx();if(i>=0)openDayView(i);}
 
-function goToday(){
-  const i=todayIdx();
-  if(i>=0) openDayView(i);
-}
-
-// ══════════════════════════════════════════════
-// ACTIONS
-// ══════════════════════════════════════════════
 function toggle(id,src,dayIdx){
   if(!ST.done)ST.done={};
   if(ST.done[id]){delete ST.done[id];}
@@ -465,50 +498,45 @@ function toggle(id,src,dayIdx){
     const now=new Date();
     ST.done[id]=now.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
   }
-  save();
-  renderProgress();
-  renderAlertBar();
-  if(src==='day'&&dayIdx!==undefined) renderDayView(dayIdx);
+  save();renderProgress();renderAlertBar();
+  if(src==='day'&&dayIdx!==undefined)renderDayView(dayIdx);
   else renderHome();
 }
 
-// ══════════════════════════════════════════════
-// MODALS
-// ══════════════════════════════════════════════
 function showOverdueModal(){
-  const list=overdueNow().map(t=>
-    `<li class="red">⚠️ <strong>${t.name}</strong><br><small>יום ${DAYS[t.day]} | ${t.location}</small></li>`
-  ).join('');
-  openModal('⚠️','משימות לא בוצעו!','red',list);
+  const list=overdueNow().map(t=>`<li class="red">⚠️ <strong>${t.name}</strong><br><small>יום ${DAYS[t.day]} | ${t.location}</small></li>`).join('');
+  document.getElementById('mIco').textContent='⚠️';
+  document.getElementById('mTitle').textContent='משימות לא בוצעו!';
+  document.getElementById('mList').innerHTML=list;
+  document.getElementById('modal').classList.add('on');
 }
-function openModal(ico,title,cls,listHtml){
-  document.getElementById('mIco').textContent=ico;
-  document.getElementById('mTitle').textContent=title;
-  document.getElementById('mTitle').className=`m-title ${cls}`;
-  document.getElementById('mList').innerHTML=listHtml;
-  document.getElementById('modal').style.display='flex';
-}
-function closeModal(){document.getElementById('modal').style.display='none';}
+function closeModal(){document.getElementById('modal').classList.remove('on');}
+function cpClose(){document.getElementById('cpOverlay').classList.remove('on');}
 
-// ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
-renderHeader();
+renderWeekStrip();
 renderProgress();
 renderAlertBar();
 renderHome();
 
-// Previous week overdue alert
+document.getElementById('cpLink').addEventListener('click',()=>{
+  document.getElementById('cpOverlay').classList.add('on');
+});
+
 if(prevOD.length&&!sessionStorage.getItem('pw')){
   sessionStorage.setItem('pw','1');
   const list=prevOD.map(t=>`<li class="orange">${t.name} — ${t.location}</li>`).join('');
-  setTimeout(()=>openModal('📋',`מהשבוע הקודם: ${prevOD.length} משימות לא בוצעו`,'orange',list),450);
-}
-// Current overdue alert
-else if(overdueNow().length&&!sessionStorage.getItem('oa')){
+  setTimeout(()=>{
+    document.getElementById('mIco').textContent='📋';
+    document.getElementById('mTitle').textContent=`מהשבוע הקודם: ${prevOD.length} לא בוצעו`;
+    document.getElementById('mList').innerHTML=list;
+    document.getElementById('modal').classList.add('on');
+  },450);
+}else if(overdueNow().length&&!sessionStorage.getItem('oa')){
   sessionStorage.setItem('oa','1');
   setTimeout(showOverdueModal,450);
 }
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 </body>
 </html>
