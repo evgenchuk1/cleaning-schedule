@@ -333,35 +333,38 @@ main{padding:14px 14px 20px;max-width:620px;margin:0 auto}
 <script>
 const DAYS=['ראשון','שני','שלישי','רביעי','חמישי','שישי'];
 const TASKS=[
-  {id:'t01', name:'מקרר ביצים',               location:'מחסן -1',     day:0},
-  {id:'t02', name:'מקרר חלב + מדפים',         location:'מחסן -1',     day:0},
+  {id:'t01', name:'מקרר ביצים גיבוי',          location:'מחסן -1',     day:0},
+  {id:'t01c',name:'מקרר ביצים חנות',           location:'חנות',        day:0},
   {id:'t03', name:'מקרר ירקות',               location:'מחסן -1',     day:1},
-  {id:'t04', name:'מקפיא קפואים',             location:'מחסן -1',     day:1},
-  {id:'t05', name:'מקפיא מאפית',              location:'מאפית',       day:2},
-  {id:'t06', name:'מקרר מאפית',               location:'מאפית',       day:2},
-  {id:'t11b',name:'מקרר החזרות',              location:'מחסן -1',     day:2},
-  {id:'t07', name:'מקרר בשר',                 location:'קצביה',       day:3},
-  {id:'t08', name:'מקרר עופות',               location:'קצביה',       day:3},
-  {id:'t09', name:'גיבוי גבינות',             location:'מעדניה גבוי', day:4},
+  {id:'t04', name:'מקפיא קפואים גלידות',      location:'חנות',        day:1},
+  {id:'t05', name:'מקפיא מאפית',              location:'מאפית',       day:3},
+  {id:'t06', name:'מקרר מאפית',               location:'מאפית',       day:3},
+  {id:'t09', name:'גיבוי גבינות',             location:'מעדניה גבוי', day:2},
+  {id:'t11b',name:'מקרר החזרות',              location:'מחסן -1',     day:1},
+  {id:'t07', name:'מקרר בשר',                 location:'קצביה',       day:2},
+  {id:'t08', name:'מקרר עופות',               location:'קצביה',       day:2},
+  {id:'t02', name:'מקרר חלב + מדפים',         location:'מחסן -1',     day:3},
   {id:'t10', name:'מקפיא מאפית 2',            location:'מחסן -1',     day:4},
   {id:'t11', name:'מקרר החזרות',              location:'מחסן -1',     day:4},
-  {id:'t01b',name:'מקרר ביצים',               location:'מחסן -1',     day:4},
-  {id:'t12b',name:'ניקיון וסדר רמפה',         location:'רמפה',        day:4},
+  {id:'t01b',name:'מקרר ביצים גיבוי',          location:'מחסן -1',     day:4},
+  {id:'t01d',name:'מקרר ביצים חנות',           location:'חנות',        day:4},
+
   {id:'t12', name:'ניקיון וסדר רמפה',         location:'רמפה',        day:5},
   {id:'t07b',name:'מקרר בשר',                 location:'קצביה',       day:5},
   {id:'t08b',name:'מקרר עופות',               location:'קצביה',       day:5},
-  {id:'t13', name:'מקרר דגים ועופות חיצוני', location:'אולם',        day:5},
+  {id:'t09b',name:'גיבוי גבינות',             location:'מעדניה גבוי', day:5},
+  {id:'t13', name:'מקרר דגים ועופות חיצוני', location:'אולם',        day:0},
 ];
 const PERIODIC=[
   {name:'ניקיון מדף תחתון — מקרר ירקות',
-   dates:['שישי 19.6.2026','שישי 19.7.2026','שישי 19.8.2026'],
+   dates:['שישי 26.6.2026','שישי 26.7.2026','שישי 26.8.2026'],
    interval:'אחת לחודש',days:[5]},
   {name:'ניקיון מדף תחתון — מקרר חלב',
    dates:['שלישי-חמישי 23-25.6.2026','שלישי-חמישי 23-25.8.2026','שלישי-חמישי 23-25.10.2026'],
    interval:'אחת לחודשיים',days:[2,3,4]},
 ];
 
-const KEY='shufersal_clean_v4';
+const KEY='shufersal_clean_v6';
 function wkKey(d=new Date()){const s=new Date(d);s.setDate(s.getDate()-s.getDay());return s.toISOString().slice(0,10);}
 function sundayOf(off=0){const d=new Date();d.setDate(d.getDate()-d.getDay()+off);return d;}
 function loadST(){try{return JSON.parse(localStorage.getItem(KEY))||{};}catch{return {};}}
